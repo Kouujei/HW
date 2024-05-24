@@ -1,0 +1,14 @@
+﻿@model IEnumerable<prjAjaxDemo.Models.Category>
+@{
+    ViewData["Title"] = "show";
+}
+
+<h1>show</h1>
+
+<ul>
+    @foreach (var category in Model)
+    {
+        <li>@category.CategoryName</li>
+    }
+
+</ul>

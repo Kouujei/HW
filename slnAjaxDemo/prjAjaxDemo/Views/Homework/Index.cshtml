@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>景點</h2>
+
+<div class="container">
+	<!-- row -->
+    <div class="row">
+        <!-- SEARCH BAR -->
+        <div id="newsletter" class="section">
+            <!-- container -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="newsletter">
+                            <form>
+                                <input class="input" type="text" placeholder="我想搜尋..."><button class="newsletter-btn"><i class="fa fa-envelope"></i>搜尋</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /SEARCH BAR -->
+    </div>
+	<!-- row -->
+</div>
+<div id="store" class="row">
+</div>
+
+
+
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+@section Styles
+{
+    <style>
+        .col-md-4 col-xs-6 {
+            float: left;
+        }
+</style>
+}
+
+@section Scripts
+{}
+<script src="~/js/travel.js"></script>
+<script src="js/main.js"></script>
+<script src="js/bootstrap.min.js"></script>
+    <script>
+        const hcard = document.querySelector('#store');
+        const showcard = spots.CommonFormat.Section.map(x => {
+            const { RowNumber, stitle, xbody, file } = x;
+            if (file.img.length > 0 ) {
+                const shortxbody = xbody.substring(0, 100);
+                const imgsrc = file.img[0].text;
+                const imgsrctxt = file.img[0]['\u0040description'];
+                console.log(imgsrc);
+                console.log(imgsrctxt);
+            return `
+                                            <div class="col-md-4 col-xs-6">
+                                            <div class="product">
+                         <div class="product-img">
+                         <img src="${imgsrc}" alt="" width="400px" height="300px">
+                         <div class="product-label">
+                         <span class="new">${RowNumber}</span>
+                         </div>
+                         </div>
+                                            <div class="product-body">
+                                            <p class="product-category" >${imgsrctxt}</p>
+                                            <h3 class="product-name" >${stitle}</h3>
+                                                <p> ${shortxbody}</p>
+                                            </div>
+                                <div class="add-to-cart" >
+                                <button class="add-to-cart-btn">TBC</button>
+                               </div>
+                                   </div>
+                     </div>`
+            } else {
+                return '';
+            }
+        });
+
+        hcard.innerHTML = showcard.join("");
+    </script>
+

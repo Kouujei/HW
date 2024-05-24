@@ -1,0 +1,146 @@
+﻿@{
+    ViewData["Title"] = "Spots";
+}
+
+<h1>作業四 景點瀏覽</h1>
+
+
+<!-- SEARCH BAR -->
+<div class="col d-flex justify-content-center align-items-center">
+
+    <div class="row">
+
+    <!-- 四個功能左到右 -->
+    <div class="col-sm-3">
+            <select class="input-select" id="idshow">
+            <option value="9">每頁9筆資料</option>
+            <option value="18">每頁18筆資料</option>
+            <option value="27">每頁27筆資料</option>
+            <option value="36">每頁36筆資料</option>
+        </select>
+    </div>
+        <div class="active col-sm-5">
+            <div class="store-filter clearfix">
+                <ul class="store-pagination" id="ul1">
+                </ul>
+            </div>
+    </div>
+    <div class="col-sm-1">
+            <select class="input-select" id="idasc">
+            <option value="0">景點升冪</option>
+            <option value="1">景點降冪</option>
+        </select>
+    </div>
+        <div class="col-sm-2 ms-auto">
+        <input class="input" placeholder="Search here" id="inputSearch">
+    </div>
+    </div>
+</div>
+<!-- 景點區 -->
+<div class="col d-flex justify-content-center align-items-center">
+    <div id="store" class="row">
+    </div>
+</div>
+@section Styles
+    {
+    <style>
+    </style>
+}
+
+@section Scripts
+    {
+    <script>
+        const div1 = document.querySelector('#store');
+        const inpSearch = document.querySelector('#inputSearch');
+        const ulPaging = document.querySelector('#ul1');
+        // const liall = ulPaging.querySelectorAll('li');
+        // liall.forEach((li, index) => {
+        //     li.addEventListener('click', () => {
+        //         liall.forEach(item => item.classList.remove('active'));
+        //         li.classList.add('active');
+        //     });
+        // });
+
+
+
+
+        const searchData = {
+            "categoryId": 0,
+            "keyword": "",
+            "sortBy": "",
+            "sortType": "asc",
+            "page": 1,
+            "pagesSize": 9
+        };
+        const pagingHandler = page => {
+            searchData.page = page;
+            loadSpots();
+        }
+        const loadSpots = async () => {
+            const url = 'https://localhost:7057/api/Spots';
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(searchData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+
+            //顯示景點資料
+            const spots = data.spotsResult.map(spot => {
+                const { spotId, spotTitle, spotDescription, address, spotImage } = spot;
+                return (`<div class="col-md-4 col-xs-6">
+                                                          <div class="product">
+                                                             <div class="product-img">
+                                                               <img src="${spotImage}" alt="" width="400px" height="300px">
+                                                             <div class="product-label">
+                                                              <span class="new">${spotId}</span>
+                                                             </div>
+                                                             </div>
+                                                               <div class="product-body">
+                                                               <p class="product-category" >${address}</p>
+                                                                <h3 class="product-name" >${spotTitle}</h3>
+                                                                  <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+                                                                 </div>
+                                                               <div class="add-to-cart" >
+                                                               <button class="add-to-cart-btn">詳細資料</button>
+                                                             </div>
+                                                             </div>
+                                                         </div>`)
+            })
+            div1.innerHTML = spots.join("");
+            console.log(searchData.pageSize);
+
+            //顯示分頁按鈕
+            let liPages = "";
+            for (let i = 1, max = data.totalPages; i <= max; i++) {
+                liPages += `<li onclick="pagingHandler(${i})"><a>${i}</a></li>`
+            }
+            ulPaging.innerHTML = liPages;
+
+            //顯示分類按鈕
+            //https://localhost:7057/api/Categories
+        }
+
+        loadSpots();
+        
+        inpSearch.addEventListener('keydown', event => {
+            if (event.keyCode === 13) {
+                searchData.keyword = event.target.value;
+                searchData.page = 1;
+                loadSpots();
+            }
+        })
+
+        const getshow = document.getElementById('idshow');
+        getshow.addEventListener('change', event => {
+            searchData.pagesSize = event.target.value;
+            console.log(event.target.value);
+            console.log(searchData.pagesSize);
+            loadSpots();
+        })
+
+    </script>
+}

@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewData["Title"] = "Address";
+}
+
+<h1>JSON 縣市下拉式選單</h1>
+<h3>分開選擇</h3>
+<select id="idselect1">請選擇...</select>
+<select id="idselect2">請縣市...</select>
+<select id="idselect3">請鄉鎮...</select>
+<label id="idlabel1">地址:</label>
+
+<h3>預設選擇第一個</h3>
+<select id="idselect4"></select>
+<select id="idselect5"></select>
+<select id="idselect6"></select>
+<label id="idlabel2">地址:</label>
+@section Styles
+{
+    <style>
+    </style>
+}
+
+@section Scripts
+{
+    <script>
+
+        const select1 = document.getElementById("idselect1");
+        const select2 = document.getElementById("idselect2");
+        const select3 = document.getElementById("idselect3");
+        const label1 = document.getElementById("idlabel1");
+
+
+
+        (async () => {
+            const response = await fetch('@Url.Content("~/api/city")');
+            const data = await response.json();
+            const citys = data.map(city => `<option value="${city}">${city}</option>`);
+            select1.innerHTML += `<option >請選擇...</option>`;
+            select1.innerHTML += citys.join("");
+        })();
+
+        function cityChanged() {
+            select2.innerHTML = "";
+            select3.innerHTML = "";
+            select3.innerHTML += `<option >請選擇...</option>`;
+            //備註: 選擇的值 語法:
+            // console.log(select.selectedIndex);
+            // console.log(select.options[select.selectedIndex].value);
+            // console.log(select.options[select.selectedIndex].text);
+
+            (async () => {
+            const pickedcity = select1.options[select1.selectedIndex].value;
+                const url = `@Url.Content("~/api/District")?city=${pickedcity}`;
+                const response = await fetch(url)
+                const data = await response.json()
+                const cityss = data.map((b) => {
+                    let bb = b.substring(3, 6);
+                    return `<option value="${b}">${bb}</option>`
+                })
+                select2.innerHTML += `<option >請選擇...</option>`;
+                select2.innerHTML += cityss.join("");
+                label1.textContent = "";
+                label1.textContent += `${pickedcity}`;
+            })();
+
+        }
+
+        function districtChanged() {
+            select3.innerHTML = "";
+            console.log("add3");
+            (async () => {
+                const pickeddistrict = select2.options[select2.selectedIndex].value;
+                const url = `@Url.Content("~/api/road")?district=${pickeddistrict}`;
+                const response = await fetch(url)
+                const data = await response.json()
+                const citysss = data.map(c=>`<option value="${c}">${c}</option>`)
+                select3.innerHTML += `<option >請選擇...</option>`;
+                select3.innerHTML += citysss.join("");
+                const labeltxtsec = pickeddistrict.substring(3, 6);
+                label1.textContent = `${pickeddistrict}`;
+            })();
+
+        }
+
+        function roadChanged() {
+            
+            (async () => {
+                const pickeddistrict = select2.options[select2.selectedIndex].value;
+                label1.textContent = `${pickeddistrict}`
+                const pickedroad = select3.options[select3.selectedIndex].value;
+                label1.textContent += `${pickedroad}`;
+            })();
+
+        }
+
+        select1.addEventListener("change", cityChanged);
+        select2.addEventListener("change", districtChanged);
+        select3.addEventListener("change", roadChanged);
+
+        //第二種:
+
+        const select4 = document.getElementById("idselect4");
+        const select5 = document.getElementById("idselect5");
+        const select6 = document.getElementById("idselect6");
+        const label2 = document.getElementById("idlabel2");
+
+        (async () => {
+            const response = await fetch('@Url.Content("~/api/city")');
+            const data = await response.json();
+            const citys = data.map(city => `<option value="${city}">${city}</option>`);
+            select4.innerHTML = citys.join("");
+            loadDistrict();
+            loadRoad();
+        })();
+
+        const loadDistrict = async () => {
+            (async () => {
+                const pickedCity = select4.options[select4.selectedIndex].value;
+                const url = `@Url.Content("~/api/District")?city=${pickedCity}`;
+                const response = await fetch(url)
+                const data = await response.json()
+                const citysss = data.map(c => {
+                    const shortc = c.substring(3,6)
+                    return `<option value="${c}">${shortc}</option>`
+                })
+                select5.innerHTML = citysss.join("");
+                const pickedDistrict = select5.options[select5.selectedIndex].value;
+                // const labeltxtsec = pickeddistrict.substring(3, 6);
+                label2.textContent = `${pickedDistrict}`;
+            })();
+        }
+        const loadRoad = async () => {
+        }
+
+
+
+
+   </script>
+}

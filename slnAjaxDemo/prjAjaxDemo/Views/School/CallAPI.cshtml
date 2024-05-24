@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "CallAPI";
+}
+
+<h1>CallAPI</h1>
+<h2>
+    呼叫API測試
+</h2>
+<div id="div1"></div>
+
+@section Styles
+{
+    <style>
+    </style>
+}
+
+@section Scripts
+{
+    <script>
+        const div1 = document.getElementById("div1");
+        (async () => {
+            const response = await fetch('@Url.Content("https://localhost:7057/api/TProducts")')
+            const data = await response.json();
+            console.log(data[0].productName);
+
+            for (i = 0; i < 10; i++) { 
+                div1.textContent += data[i].productName}+"\r\n";
+            }
+
+        })();
+
+   </script>
+}

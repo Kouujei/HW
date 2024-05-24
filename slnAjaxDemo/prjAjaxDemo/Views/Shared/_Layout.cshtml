@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - prjAjaxDemo</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/prjAjaxDemo.styles.css" asp-append-version="true" />
+     <!-- 外加-->
+    <link type="text/css" rel="stylesheet" href="~/css/slick.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/slick-theme.css" />
+    <link type="text/css" rel="stylesheet" href="~/css/nouislider.min.css" />
+    <link rel="stylesheet" href="~/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="~/css/style.css" />
+    <!-- 外加-->
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse d-flex justify-content-center" id="navbarScroll">
+                    <ul class="navbar-nav my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               上課內容
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="Address">城市下拉式選單</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="First">Ajax按鍵測試</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="Register">表單登入</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="show">景點分類</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="Spots">展現景點</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="School" asp-action="CallAPI">呼叫API</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                回家作業
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Homework" asp-action="Index">景點瀏覽</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Homework" asp-action="Check">檢查帳號</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Homework" asp-action="Spots">API景點</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                做做看
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Try" asp-action="Index">TBC</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+</header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - prjAjaxDemo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/js/jquery.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/slick.min.js"></script>
+    <script src="~/js/nouislider.min.js"></script>
+    <script src="~/js/jquery.zoom.min.js"></script>
+    @* <script src="~/js/main.js"></script> *@
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
