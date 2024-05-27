@@ -6,34 +6,39 @@
 
 
 <!-- SEARCH BAR -->
-<div class="col d-flex justify-content-center align-items-center">
-
-    <div class="row">
-
+<div class="row">
     <!-- 四個功能左到右 -->
-    <div class="col-sm-3">
+    <div class="col-sm-2">
             <select class="input-select" id="idshow">
-            <option value="9">每頁9筆資料</option>
+            <option value="3">每頁3筆資料</option>
+            <option value="9" selected>每頁9筆資料</option>
             <option value="18">每頁18筆資料</option>
             <option value="27">每頁27筆資料</option>
-            <option value="36">每頁36筆資料</option>
         </select>
     </div>
-        <div class="active col-sm-5">
-            <div class="store-filter clearfix">
-                <ul class="store-pagination" id="ul1">
+    <div class="col-sm-5  p-0">
+        <ul class="store-pagination text-left" id="ul1">
+                </ul>
+        </div>
+    <div class="col-sm-2">
+            <select class="input-select" id="idasc">
+            <option value="asc">景點升冪</option>
+            <option value="desc">景點降冪</option>
+        </select>
+    </div>
+        <div class="col-sm-3">
+        <input class="input" placeholder="Search here" id="inputSearch">
+        </div>
+</div>
+<!-- 分類按鍵 -->
+<div id="breadcrumb" class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col d-flex justify-content-center align-items-center">
+                <ul class="breadcrumb-tree" id="idcat">
                 </ul>
             </div>
-    </div>
-    <div class="col-sm-1">
-            <select class="input-select" id="idasc">
-            <option value="0">景點升冪</option>
-            <option value="1">景點降冪</option>
-        </select>
-    </div>
-        <div class="col-sm-2 ms-auto">
-        <input class="input" placeholder="Search here" id="inputSearch">
-    </div>
+        </div>
     </div>
 </div>
 <!-- 景點區 -->
@@ -53,6 +58,7 @@
         const div1 = document.querySelector('#store');
         const inpSearch = document.querySelector('#inputSearch');
         const ulPaging = document.querySelector('#ul1');
+        const ulcat = document.getElementById("idcat");
         // const liall = ulPaging.querySelectorAll('li');
         // liall.forEach((li, index) => {
         //     li.addEventListener('click', () => {
@@ -60,9 +66,6 @@
         //         li.classList.add('active');
         //     });
         // });
-
-
-
 
         const searchData = {
             "categoryId": 0,
@@ -76,6 +79,11 @@
             searchData.page = page;
             loadSpots();
         }
+
+        const categoryHandler = cId => {
+            searchData.categoryId = cId;
+            loadSpots();
+        }
         const loadSpots = async () => {
             const url = 'https://localhost:7057/api/Spots';
             const response = await fetch(url, {
@@ -86,43 +94,103 @@
                 }
             });
             const data = await response.json();
-            console.log(data);
 
             //顯示景點資料
             const spots = data.spotsResult.map(spot => {
                 const { spotId, spotTitle, spotDescription, address, spotImage } = spot;
                 return (`<div class="col-md-4 col-xs-6">
-                                                          <div class="product">
-                                                             <div class="product-img">
-                                                               <img src="${spotImage}" alt="" width="400px" height="300px">
-                                                             <div class="product-label">
-                                                              <span class="new">${spotId}</span>
-                                                             </div>
-                                                             </div>
-                                                               <div class="product-body">
-                                                               <p class="product-category" >${address}</p>
-                                                                <h3 class="product-name" >${spotTitle}</h3>
-                                                                  <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-                                                                 </div>
-                                                               <div class="add-to-cart" >
-                                                               <button class="add-to-cart-btn">詳細資料</button>
-                                                             </div>
-                                                             </div>
-                                                         </div>`)
+                         <div class="product">
+                         <div class="product-img">
+                          <img src="${spotImage}" alt="" width="400px" height="300px">
+                                             <div class="product-label">
+                                             <span class="new">${spotId}</span>
+                                              </div>
+                                                                             </div>
+                                                     <div class="product-body">
+                                            <p class="product-category" >${address}</p>
+                               <h3 class="product-name" >${spotTitle}</h3>
+                             <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+                                                     </div>
+                        <div class="add-to-cart" >
+                          <button class="add-to-cart-btn">詳細資料</button>
+                           </div>
+                               </div>
+                     </div>`)
             })
             div1.innerHTML = spots.join("");
-            console.log(searchData.pageSize);
 
+
+
+                // 顯示分類按鈕
+                const urlC = 'https://localhost:7057/api/Categories';
+                const responseC = await fetch(urlC);
+                const dataC = await responseC.json();
+                const liCat = dataC.map(cats => {
+                    const { categoryId, categoryName } = cats;
+                    return `<li onclick="categoryHandler(${categoryId})"><a>${categoryName}</a></li>`;
+                });
+                ulcat.innerHTML = liCat.join("");
+            
+
+            loadPage(data.totalPages);
+
+
+        }
+
+        const loadPage = (max) => {
             //顯示分頁按鈕
             let liPages = "";
-            for (let i = 1, max = data.totalPages; i <= max; i++) {
-                liPages += `<li onclick="pagingHandler(${i})"><a>${i}</a></li>`
+            let whichpage = Math.ceil(max / 8);
+            if (whichpage > 1) 
+            {
+                    for (let i = 1; i < 9; i++) 
+                    {
+                        liPages += `<li onclick="pagingHandler(${i})" id="li${i}"><a>${i}</a></li>`;
+                    }
+                liPages += `<li onclick="loadMore(${max},9)">></a></li>`;
+            }
+            else {
+                for (let i = 1; i <= max; i++) {
+                    liPages += `<li onclick="pagingHandler(${i})"><a>${i}</a></li>`;
+                }
             }
             ulPaging.innerHTML = liPages;
-
-            //顯示分類按鈕
-            //https://localhost:7057/api/Categories
         }
+        const loadMore = (max, start) => {
+            //顯示更多分頁按鈕 (start 至 start+7)
+            let liPages = "";
+            let whichpage = Math.ceil(max / 8);
+            let end = Math.min(start + 8, max + 1);//選取比較小的值作為最尾端頁數
+            liPages += `<li onclick="goBack(${max}, ${start - 8})"><</a></li>`;
+            for (let i = start; i < end; i++) {
+                liPages += `<li onclick="pagingHandler(${i})" id="li${i}"><a>${i}</a></li>`;
+            }
+            if (end <= max) {
+                liPages += `<li onclick="loadMore(${max}, ${start + 8})">></a></li>`;
+            }
+            ulPaging.innerHTML = liPages;
+        }
+
+        const goBack = (max, start) => {
+            let liPages = "";
+            let end = Math.min(start + 8, max + 1);//選取比較小的值作為最尾端頁數
+            if (start > 1) {
+                liPages += `<li onclick="goBack(${max}, ${start - 8})"><</a></li>`;
+            }
+            for (let i = start; i < end; i++) {
+                liPages += `<li onclick="pagingHandler(${i})" id="li${i}"><a>${i}</a></li>`;
+            }
+            liPages += `<li onclick="loadMore(${max}, ${start + 8})">></a></li>`;
+            ulPaging.innerHTML = liPages;
+        }
+
+
+
+
+
+
+
+
 
         loadSpots();
         
@@ -137,7 +205,12 @@
         const getshow = document.getElementById('idshow');
         getshow.addEventListener('change', event => {
             searchData.pagesSize = event.target.value;
-            searchData.page = 1;
+            loadSpots();
+        })
+
+        const idasc= document.getElementById('idasc');
+        idasc.addEventListener('change', event => {
+            searchData.sortType = event.target.value;
             loadSpots();
         })
 
