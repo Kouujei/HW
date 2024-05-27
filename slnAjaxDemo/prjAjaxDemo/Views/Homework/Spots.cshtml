@@ -3,7 +3,9 @@
 }
 
 <div>
-    <span>作業四 景點瀏覽</span><span> 本次搜尋條件:</span><span id="idspan" style="color: blueviolet;"></span>
+    <span>作業四 景點瀏覽</span><span> 本次搜尋條件:</span>
+    <span id="idspan2" style="color: darkcyan;">
+     <span id="idspan" style="color: blueviolet;"></span>
 <button type="button" id="again">重新查詢</button>    
 </div>
 
@@ -86,7 +88,11 @@
             loadSpots();
         }
         //第二區:分類按鈕
-
+        const categoryHandler = cId => {
+            searchData.categoryId = cId;
+            ifChange();
+            query2.textContent = `[顯示分類名稱]${searchData.categoryId}`;
+        }
             // 顯示分類按鈕
         async function loadCatli() {
             const urlC = 'https://localhost:7057/api/Categories';
@@ -189,17 +195,12 @@
         }
         loadSpots();
         const query = document.getElementById("idspan");
+        const query2 = document.getElementById("idspan2");
 
         function ifChange() {
             searchData.sortType = idasc.value;
             searchData.keyword = inpSearch.value;
             searchData.pagesSize = getshow.value;
-            const categoryHandler = cId => {
-                searchData.categoryId = cId;
-                return cId;
-            }
-            console.log(categoryHandler());
-            searchData.categoryId = categoryHandler();
             console.log(searchData.categoryId);
             query.textContent = `[顯示單頁資料筆數: ${searchData.pagesSize} // 搜尋的文字: ${searchData.keyword} // 景點排列為: ${searchData.sortType}]`;
             loadSpots();
