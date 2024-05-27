@@ -137,8 +137,7 @@
         const getshow = document.getElementById('idshow');
         getshow.addEventListener('change', event => {
             searchData.pagesSize = event.target.value;
-            console.log(event.target.value);
-            console.log(searchData.pagesSize);
+            searchData.page = 1;
             loadSpots();
         })
 
