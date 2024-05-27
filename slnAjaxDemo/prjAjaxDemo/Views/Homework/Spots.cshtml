@@ -2,7 +2,10 @@
     ViewData["Title"] = "Spots";
 }
 
-<h1>作業四 景點瀏覽</h1>
+<div>
+    <span>作業四 景點瀏覽</span><span> 本次搜尋條件:</span><span id="idspan" style="color: blueviolet;"></span>
+<button type="button" id="again">重新查詢</button>    
+</div>
 
 
 <!-- SEARCH BAR -->
@@ -22,8 +25,8 @@
         </div>
     <div class="col-sm-2">
             <select class="input-select" id="idasc">
-            <option value="asc">景點升冪</option>
-            <option value="desc">景點降冪</option>
+            <option value="asc" selected>景點編號小到大排列</option>
+            <option value="desc">景點編號大到小排列</option>
         </select>
     </div>
         <div class="col-sm-3">
@@ -56,6 +59,7 @@
     {
     <script>
         const div1 = document.querySelector('#store');
+        //D搜尋
         const inpSearch = document.querySelector('#inputSearch');
         const ulPaging = document.querySelector('#ul1');
         const ulcat = document.getElementById("idcat");
@@ -67,6 +71,7 @@
         //     });
         // });
 
+        //條件
         const searchData = {
             "categoryId": 0,
             "keyword": "",
@@ -75,15 +80,28 @@
             "page": 1,
             "pagesSize": 9
         };
+        //B.頁數
         const pagingHandler = page => {
             searchData.page = page;
             loadSpots();
         }
+        //第二區:分類按鈕
 
-        const categoryHandler = cId => {
-            searchData.categoryId = cId;
-            loadSpots();
+            // 顯示分類按鈕
+        async function loadCatli() {
+            const urlC = 'https://localhost:7057/api/Categories';
+            const responseC = await fetch(urlC);
+            const dataC = await responseC.json();
+            const liCat = dataC.map(cats => {
+                const { categoryId, categoryName } = cats;
+                return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}"><a>${categoryName}</a></li>`;
+            });
+            ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0"><a>全部</a></li>`;
+            ulcat.innerHTML += liCat.join("");
+
         }
+
+        //第三區:景點資料
         const loadSpots = async () => {
             const url = 'https://localhost:7057/api/Spots';
             const response = await fetch(url, {
@@ -107,38 +125,23 @@
                                               </div>
                                                                              </div>
                                                      <div class="product-body">
-                                            <p class="product-category" >${address}</p>
+                                            <p class="product-category" ></p>
                                <h3 class="product-name" >${spotTitle}</h3>
                              <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
                                                      </div>
                         <div class="add-to-cart" >
-                          <button class="add-to-cart-btn">詳細資料</button>
+                                  <button class="add-to-cart-btn">${address}</button>
                            </div>
                                </div>
                      </div>`)
             })
             div1.innerHTML = spots.join("");
-
-
-
-                // 顯示分類按鈕
-                const urlC = 'https://localhost:7057/api/Categories';
-                const responseC = await fetch(urlC);
-                const dataC = await responseC.json();
-                const liCat = dataC.map(cats => {
-                    const { categoryId, categoryName } = cats;
-                    return `<li onclick="categoryHandler(${categoryId})"><a>${categoryName}</a></li>`;
-                });
-                ulcat.innerHTML = liCat.join("");
-            
-
+            loadCatli();
             loadPage(data.totalPages);
-
-
         }
 
+        //B.顯示分頁按鈕
         const loadPage = (max) => {
-            //顯示分頁按鈕
             let liPages = "";
             let whichpage = Math.ceil(max / 8);
             if (whichpage > 1) 
@@ -156,6 +159,7 @@
             }
             ulPaging.innerHTML = liPages;
         }
+        //B.顯示分頁按鈕-下一頁
         const loadMore = (max, start) => {
             //顯示更多分頁按鈕 (start 至 start+7)
             let liPages = "";
@@ -170,7 +174,7 @@
             }
             ulPaging.innerHTML = liPages;
         }
-
+        //B.顯示分頁按鈕-回上頁
         const goBack = (max, start) => {
             let liPages = "";
             let end = Math.min(start + 8, max + 1);//選取比較小的值作為最尾端頁數
@@ -183,36 +187,38 @@
             liPages += `<li onclick="loadMore(${max}, ${start + 8})">></a></li>`;
             ulPaging.innerHTML = liPages;
         }
-
-
-
-
-
-
-
-
-
         loadSpots();
-        
+        const query = document.getElementById("idspan");
+
+        function ifChange() {
+            searchData.sortType = idasc.value;
+            searchData.keyword = inpSearch.value;
+            searchData.pagesSize = getshow.value;
+            const categoryHandler = cId => {
+                searchData.categoryId = cId;
+                return cId;
+            }
+            console.log(categoryHandler());
+            searchData.categoryId = categoryHandler();
+            console.log(searchData.categoryId);
+            query.textContent = `[顯示單頁資料筆數: ${searchData.pagesSize} // 搜尋的文字: ${searchData.keyword} // 景點排列為: ${searchData.sortType}]`;
+            loadSpots();
+        }
+        //A.顯示數量
+        const getshow = document.getElementById('idshow');
+        getshow.addEventListener('change', ifChange);
+        //C.升降
+        const idasc= document.getElementById('idasc');
+        idasc.addEventListener('change', ifChange);
+        //D.搜尋
         inpSearch.addEventListener('keydown', event => {
             if (event.keyCode === 13) {
-                searchData.keyword = event.target.value;
-                searchData.page = 1;
-                loadSpots();
+                ifChange();
             }
         })
 
-        const getshow = document.getElementById('idshow');
-        getshow.addEventListener('change', event => {
-            searchData.pagesSize = event.target.value;
-            loadSpots();
-        })
-
-        const idasc= document.getElementById('idasc');
-        idasc.addEventListener('change', event => {
-            searchData.sortType = event.target.value;
-            loadSpots();
-        })
-
+        //重製按鈕
+        const again = document.getElementById("again");
+        again.addEventListener('click', () => {alert("不知道怎麼做 請您刷新頁面比較快><") })
     </script>
 }
