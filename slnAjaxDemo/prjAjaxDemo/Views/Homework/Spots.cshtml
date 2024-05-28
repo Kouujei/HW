@@ -21,8 +21,8 @@
             <option value="27">每頁27筆資料</option>
         </select>
     </div>
-    <div class="col-sm-5  p-0">
-        <ul class="store-pagination text-left" id="ul1">
+    <div class="col-sm-5 p-0">
+        <ul class="store-pagination" id="ul1">
                 </ul>
         </div>
     <div class="col-sm-2">
@@ -54,6 +54,9 @@
 @section Styles
     {
     <style>
+        .red {
+            color: red;
+        }
     </style>
 }
 
@@ -65,14 +68,6 @@
         const inpSearch = document.querySelector('#inputSearch');
         const ulPaging = document.querySelector('#ul1');
         const ulcat = document.getElementById("idcat");
-        // const liall = ulPaging.querySelectorAll('li');
-        // liall.forEach((li, index) => {
-        //     li.addEventListener('click', () => {
-        //         liall.forEach(item => item.classList.remove('active'));
-        //         li.classList.add('active');
-        //     });
-        // });
-
         //條件
         const searchData = {
             "categoryId": 0,
@@ -87,12 +82,26 @@
             searchData.page = page;
             loadSpots();
         }
-        //第二區:分類按鈕
+        let pickedcat =0;
         const categoryHandler = cId => {
-            searchData.categoryId = cId;
-            ifChange();
-            query2.textContent = `[顯示分類名稱]${searchData.categoryId}`;
+            pickedcat = parseInt(cId);
+            console.log(pickedcat);
+            return pickedcat;
         }
+        function catColor() {
+            const pickedcat = categoryHandler();
+            if (pickedcat !== null) {
+                for (var i = 0; i < 12; i++) {
+                    document.getElementById('idc' + i).style.color = 'initial';
+                }
+                document.getElementById('idc' + pickedcat).style.color = 'Red';
+            }
+            else {
+            document.getElementById('idc' + 0).style.color = 'Red';
+            }
+        }
+        //第二區:分類按鈕
+
             // 顯示分類按鈕
         async function loadCatli() {
             const urlC = 'https://localhost:7057/api/Categories';
@@ -100,9 +109,9 @@
             const dataC = await responseC.json();
             const liCat = dataC.map(cats => {
                 const { categoryId, categoryName } = cats;
-                return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}"><a>${categoryName}</a></li>`;
+                    return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}" id="idc${categoryId}"><a>${categoryName}</a></li>`;
             });
-            ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0"><a>全部</a></li>`;
+            ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0" id="idc0"><a>全部</a></li>`;
             ulcat.innerHTML += liCat.join("");
 
         }
@@ -201,8 +210,8 @@
             searchData.sortType = idasc.value;
             searchData.keyword = inpSearch.value;
             searchData.pagesSize = getshow.value;
-            console.log(searchData.categoryId);
-            query.textContent = `[顯示單頁資料筆數: ${searchData.pagesSize} // 搜尋的文字: ${searchData.keyword} // 景點排列為: ${searchData.sortType}]`;
+            searchData.categoryId = pickedcat;
+            query.textContent = `[顯示單頁資料筆數: ${searchData.pagesSize}] // [搜尋的文字: ${searchData.keyword}] // [景點排列為: ${searchData.sortType}] // [景點的分類ID為: ${searchData.categoryId}]`;
             loadSpots();
         }
         //A.顯示數量
@@ -211,12 +220,20 @@
         //C.升降
         const idasc= document.getElementById('idasc');
         idasc.addEventListener('change', ifChange);
+
         //D.搜尋
         inpSearch.addEventListener('keydown', event => {
             if (event.keyCode === 13) {
                 ifChange();
             }
         })
+        //第二區: 分類搜尋
+
+
+
+
+        ulcat.addEventListener('click', ifChange);
+        ulcat.addEventListener('click', catColor);
 
         //重製按鈕
         const again = document.getElementById("again");

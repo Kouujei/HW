@@ -17,9 +17,5 @@ namespace prjAjaxDemo.Controllers
         {
             return View();
         }
-        public IActionResult SpotsDetail()
-        {
-            return View();
-        }
     }
 }
