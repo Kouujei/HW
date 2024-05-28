@@ -82,24 +82,26 @@
             searchData.page = page;
             loadSpots();
         }
-        let pickedcat =0;
+        let pickedcat;
         const categoryHandler = cId => {
-            pickedcat = parseInt(cId);
-            console.log(pickedcat);
-            return pickedcat;
+            pickedcat = cId;
         }
-        function catColor() {
-            const pickedcat = categoryHandler();
-            if (pickedcat !== null) {
-                for (var i = 0; i < 12; i++) {
-                    document.getElementById('idc' + i).style.color = 'initial';
-                }
-                document.getElementById('idc' + pickedcat).style.color = 'Red';
-            }
-            else {
-            document.getElementById('idc' + 0).style.color = 'Red';
-            }
-        }
+
+        // ulcat.addEventListener("click", function (event) {
+        //     if (pickedcat !== null) {
+        //         for (var i = 0; i < 12; i++) {
+        //             document.getElementById('idc' + i).style.color = 'initial';
+        //         }
+        //         document.getElementById('idc' + pickedcat).style.color = 'Red';
+        //     }
+        //     else {
+        //         document.getElementById('idc' + 0).style.color = 'Red';
+        //     }
+        // });
+        // function catColor() {
+        //     const pickedcat = categoryHandler();
+        //    
+        // }
         //第二區:分類按鈕
 
             // 顯示分類按鈕
@@ -233,7 +235,7 @@
 
 
         ulcat.addEventListener('click', ifChange);
-        ulcat.addEventListener('click', catColor);
+        // ulcat.addEventListener('click', catColor);
 
         //重製按鈕
         const again = document.getElementById("again");
