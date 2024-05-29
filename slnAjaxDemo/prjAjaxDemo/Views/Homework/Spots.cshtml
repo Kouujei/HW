@@ -54,20 +54,36 @@
 @section Styles
     {
     <style>
-        .red {
-            color: red;
-        }
     </style>
 }
 
 @section Scripts
     {
     <script>
+        const ulcat = document.getElementById("idcat");
+        ulcat.addEventListener("click", function (event) {
+            if (pickedcat !== null) {
+                for (var i = 0; i < 12; i++) {
+                    let getid = document.getElementById('idc' + i);
+                    getid.style.color = 'green';
+                    console.log(getid);
+                    console.log("去掉顏色");
+                }
+                let getidd = document.getElementById('idc' + pickedcat);
+                getidd.style.color = 'red';
+                console.log("被選的");
+            }
+            else {
+                document.getElementById('idc' + 0).style.color = 'red';
+                console.log("預設?");
+            }
+        });
+
         const div1 = document.querySelector('#store');
         //D搜尋
         const inpSearch = document.querySelector('#inputSearch');
         const ulPaging = document.querySelector('#ul1');
-        const ulcat = document.getElementById("idcat");
+
         //條件
         const searchData = {
             "categoryId": 0,
@@ -82,26 +98,19 @@
             searchData.page = page;
             loadSpots();
         }
-        let pickedcat;
+        
         const categoryHandler = cId => {
             pickedcat = cId;
+            console.log(pickedcat);
         }
+        let pickedcat;
 
-        // ulcat.addEventListener("click", function (event) {
-        //     if (pickedcat !== null) {
-        //         for (var i = 0; i < 12; i++) {
-        //             document.getElementById('idc' + i).style.color = 'initial';
-        //         }
-        //         document.getElementById('idc' + pickedcat).style.color = 'Red';
-        //     }
-        //     else {
-        //         document.getElementById('idc' + 0).style.color = 'Red';
-        //     }
-        // });
-        // function catColor() {
-        //     const pickedcat = categoryHandler();
-        //    
-        // }
+
+
+        function catColor() {
+            const pickedcat = categoryHandler();
+           
+        }
         //第二區:分類按鈕
 
             // 顯示分類按鈕
@@ -111,7 +120,7 @@
             const dataC = await responseC.json();
             const liCat = dataC.map(cats => {
                 const { categoryId, categoryName } = cats;
-                    return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}" id="idc${categoryId}"><a>${categoryName}</a></li>`;
+                return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}"><a id="idc${categoryId}">${categoryName}</a></li>`;
             });
             ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0" id="idc0"><a>全部</a></li>`;
             ulcat.innerHTML += liCat.join("");
