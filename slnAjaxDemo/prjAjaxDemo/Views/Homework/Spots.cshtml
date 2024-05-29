@@ -54,6 +54,8 @@
 @section Styles
     {
     <style>
+
+        
     </style>
 }
 
@@ -61,11 +63,10 @@
     {
     <script>
         const ulcat = document.getElementById("idcat");
-        ulcat.addEventListener("click", function (event) {
+       /* ulcat.addEventListener("click", function (event) {
             if (pickedcat !== null) {
                 for (var i = 0; i < 12; i++) {
                     let getid = document.getElementById('idc' + i);
-                    getid.style.color = 'green';
                     console.log(getid);
                     console.log("去掉顏色");
                 }
@@ -77,7 +78,7 @@
                 document.getElementById('idc' + 0).style.color = 'red';
                 console.log("預設?");
             }
-        });
+        });*/
 
         const div1 = document.querySelector('#store');
         //D搜尋
@@ -107,25 +108,42 @@
 
 
 
-        function catColor() {
-            const pickedcat = categoryHandler();
+        // function catColor() {
+        //     const pickedcat = categoryHandler();
            
-        }
+        // }
         //第二區:分類按鈕
 
             // 顯示分類按鈕
-        async function loadCatli() {
+        (async function loadCatli() {
             const urlC = 'https://localhost:7057/api/Categories';
             const responseC = await fetch(urlC);
             const dataC = await responseC.json();
             const liCat = dataC.map(cats => {
                 const { categoryId, categoryName } = cats;
-                return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}"><a id="idc${categoryId}">${categoryName}</a></li>`;
+                return `<li onclick="categoryHandler(${categoryId})" value="${categoryId}"><a class="Acategory" id="idc${categoryId}">${categoryName}</a></li>`;
             });
-            ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0" id="idc0"><a>全部</a></li>`;
+            ulcat.innerHTML = `<li onclick="categoryHandler(0)" value="0" id="idc0"><a class="Acategory">全部</a></li>`;
             ulcat.innerHTML += liCat.join("");
 
-        }
+            //===================================================
+            // var test = document.querySelector('#idcat');
+            // console.log(test);
+            // test.addEventListener('click', (event) => { console.log(event.target); event.target.style.backgroundColor = 'white';})
+
+            const category = document.querySelectorAll('.Acategory');
+            //console.log(category);
+            for (var item of category) {
+                item.addEventListener('click', (event) => {
+                    for(var i of category) {
+                    i.style.backgroundColor = 'white';
+                    }
+                    event.target.style.backgroundColor = 'mistyrose';
+                })
+            };
+
+        })();
+            
 
         //第三區:景點資料
         const loadSpots = async () => {
@@ -145,24 +163,24 @@
                 return (`<div class="col-md-4 col-xs-6">
                          <div class="product">
                          <div class="product-img">
-                          <img src="${spotImage}" alt="" width="400px" height="300px">
-                                             <div class="product-label">
-                                             <span class="new">${spotId}</span>
-                                              </div>
-                                                                             </div>
-                                                     <div class="product-body">
-                                            <p class="product-category" ></p>
-                               <h3 class="product-name" >${spotTitle}</h3>
-                             <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
-                                                     </div>
-                        <div class="add-to-cart" >
-                                  <button class="add-to-cart-btn">${address}</button>
-                           </div>
-                               </div>
-                     </div>`)
+                         <img src="${spotImage}" alt="" width="400px" height="300px">
+                         <div class="product-label">
+                         <span class="new">${spotId}</span>
+                         </div>
+                         </div>
+                         <div class="product-body">
+                         <p class="product-category" ></p>
+                         <h3 class="product-name" >${spotTitle}</h3>
+                         <p> ${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100)}...</p>
+                         </div>
+                         <div class="add-to-cart" >
+                         <button class="add-to-cart-btn">${address}</button>
+                         </div>
+                         </div>
+                         </div>`)
             })
             div1.innerHTML = spots.join("");
-            loadCatli();
+            //loadCatli();
             loadPage(data.totalPages);
         }
 
