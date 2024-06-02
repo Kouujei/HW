@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using prjMSIT158API8.Models;
+using prjMSIT158API8.Models.SS.DTO;
 
 namespace prjMSIT158API8.Controllers
 {
@@ -74,17 +75,25 @@ namespace prjMSIT158API8.Controllers
 
         // POST: api/TProducts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<TProduct>> PostTProduct(TProduct tProduct)
-        {
-            _context.TProducts.Add(tProduct);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTProduct", new { id = tProduct.ProductId }, tProduct);
+        //public async Task<ActionResult<TProduct>> PostTProduct(TProduct tProduct)
+        //{
+        //    _context.TProducts.Add(tProduct);
+        //    await _context.SaveChangesAsync();
+
+        //    return CreatedAtAction("GetTProduct", new { id = tProduct.ProductId }, tProduct);
+        //}
+        [HttpPost]
+        public async Task<ActionResult<TProduct>> GetProductBySearch(SearchProductDTO searchProductDTO)
+        {
+            var searchProductresult = searchProductDTO.LabelName;
+            await _context.SaveChangesAsync();
+            return Ok(searchProductresult);
+
         }
 
-        // DELETE: api/TProducts/5
-        [HttpDelete("{id}")]
+		// DELETE: api/TProducts/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTProduct(int id)
         {
             var tProduct = await _context.TProducts.FindAsync(id);
