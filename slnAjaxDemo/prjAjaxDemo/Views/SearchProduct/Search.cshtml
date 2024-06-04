@@ -1,0 +1,70 @@
+﻿
+<div id="div1">
+    <span>搜尋測試</span>
+</div>
+<input class="input" placeholder="手錶" id="inputSearch">
+<div class="col d-flex justify-content-center align-items-center">
+    <div id="store" class="row">
+    </div>
+</div>
+
+@section Styles
+{
+    <style>
+    </style>
+}
+
+@section Scripts
+{
+    <script>
+
+        const searchData = {
+            "keyword": "",
+        };
+
+        const div1 = document.getElementById("div1");
+        const inpSearch = document.getElementById("inputSearch");
+        const result = async () => {
+            const url = 'https://localhost:7057/api/TProducts';
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(searchData),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            //顯示資料
+            const pros = data.map(pro => {
+                const { productName, stocks } = pro;
+                return (`<div class="col-md-4 col-xs-6">
+                                 <div class="product">
+                                 <div class="product-img">
+                                 <div class="product-label">
+                                         <span class="new">${stocks}</span>
+                                 </div>
+                                 </div>
+                                 <div class="product-body">
+                                 <p class="product-category" ></p>
+                                         <h3 class="product-name" >${productName}</h3>
+                                         <p> ${productName}...</p>
+                                 </div>
+                                 <div class="add-to-cart" >
+                                         <button class="add-to-cart-btn">${productName}</button>
+                                 </div>
+                                 </div>
+                                 </div>`)
+            })
+            div1.innerHTML = pros.join("");
+            console.log(div1.innerHTML);
+        }
+
+        inpSearch.addEventListener('keydown', event => {
+            if (event.keyCode === 13) {
+                searchData.keyword = inpSearch.value;
+                console.log(searchData.keyword);
+                result();
+            }
+        })
+   </script>
+}

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using prjAjaxDemo.Models;
 using prjMSIT158API8.Models;
 using prjMSIT158API8.Models.SS.DTO;
 
@@ -83,14 +84,37 @@ namespace prjMSIT158API8.Controllers
 
         //    return CreatedAtAction("GetTProduct", new { id = tProduct.ProductId }, tProduct);
         //}
-        [HttpPost]
-        public async Task<ActionResult<TProduct>> GetProductBySearch(SearchProductDTO searchProductDTO)
-        {
-            var searchProductresult = searchProductDTO.LabelName;
-            await _context.SaveChangesAsync();
-            return Ok(searchProductresult);
 
-        }
+		[HttpPost]
+		public async Task<ActionResult<IEnumerable<TProduct>>> GetProductBySearch(SearchProductDTO searchProductDTO)
+		{
+            //次分類
+            var query = searchProductDTO.SubCatId == 0 ? _context.TProducts : _context.TProducts.Where(s => s.SubCategoryId == searchProductDTO.SubCatId);
+            //主分類
+            //query = searchProductDTO.CatId == 0 ? _context.TProducts : _context.TProducts..Where(s => s.SubCategoryId == searchProductDTO.SubCatId);
+            //品牌
+            query = searchProductDTO.LabelId == 0 ? _context.TProducts : _context.TProducts.Where(s => s.LabelId == searchProductDTO.LabelId);
+            //活動
+            query = searchProductDTO.ActiveId == 0 ? _context.TProducts : _context.TProducts.Where(s => s.ActiveId == searchProductDTO.ActiveId);
+            // 使用 AsQueryable 來延遲查詢
+            query = _context.TProducts.AsQueryable();
+			// searchword查詢
+			if (!string.IsNullOrEmpty(searchProductDTO.searchword))
+			{
+				query = query.Where(p => p.ProductName.Contains(searchProductDTO.searchword));
+			}
+            if (!string.IsNullOrEmpty(searchProductDTO.searchword))
+            {
+                query = query.Where(p => p.ProductName.Contains(searchProductDTO.searchword));
+            }
+
+            // 執行查詢並獲取結果
+            var result = await query.ToListAsync();
+
+			// 返回查詢結果
+			return Ok(result);
+		}
+
 
 		// DELETE: api/TProducts/5
 		[HttpDelete("{id}")]
